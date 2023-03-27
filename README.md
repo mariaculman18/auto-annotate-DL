@@ -1,4 +1,4 @@
-# Automatic annotation (auto-annotate-DL)
+# Automatic Annotation (auto-annotate-DL)
 
 ## How to automatically annotate objects in images?
 
