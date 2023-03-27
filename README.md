@@ -8,7 +8,7 @@ Unfortunately, DL requires large supplies of data to optimize massive models of 
 
 Thus, this focuses on enabling a DL automatic annotation application that does not require model training by relying on the latest advances in self-supervised learning (DINO), vision transformers (ViT), and convolutionals (ConvNeXt). This code is based on my Ph.D. work, where I propose data generation and model training strategies to overcome the limitation of insufficient data in non-conventional computer vision applications for agriculture. The provided annotation results are noisy, as objects are not perfectly located or classified. Still, they can be used as a baseline to automatically generate a dataset for a target application. This is especially advantageous since the manual generation of a dataset is labor-intensive and time-consuming.
 
-The application can be run from [object_detector.ipynb] (https://github.com/mariaculman18/auto-annotate-DL/blob/main/object_detector.ipynb) or [object_detector.py] (https://github.com/mariaculman18/auto-annotate-DL/blob/main/object_detector.py).
+The application can be run from [object_detector.ipynb](https://github.com/mariaculman18/auto-annotate-DL/blob/main/object_detector.ipynb) or [object_detector.py](https://github.com/mariaculman18/auto-annotate-DL/blob/main/object_detector.py).
 
 In short:
 * What? Annotating objects in images without model training.
