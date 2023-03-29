@@ -15,7 +15,7 @@ In short:
 * Input: images containing single or multiple objects. Objects from [ImageNet-21 thousand classes](https://storage.googleapis.com/bit_models/imagenet21k_wordnet_lemmas.txt) can be recognized.
 * Output: images with boxes containing objects. Each annotation displays the most probable class of the object and the confidence (0-1) the model gives to the inference.
 
-How does it work?
+## How does it work?
 
 Following the below flowchart:
 1. The original image is fed into a powerful feature extractor to obtain segmenting features. The feature extractor is a Vision Transformer (ViT) trained under a self-supervised method called [DINO](https://arxiv.org/abs/2104.14294) and developed at Facebook.
@@ -46,3 +46,6 @@ Notes:
 * Modify the potential number and extent of the discovered objects by changing the parameters: number_seeds and correlation_th.
 * Image examples from my personal files and [ImageNet](https://www.image-net.org/), a generic dataset, have been placed for demonstration purposes. These are fruits but the code is extensible to any image.
 * An auxiliary python file is placed for building the feature extractor (vision_transformer.py), this was taken from [DINO repository](https://github.com/facebookresearch/dino). Other resources have been taken from [LOST](https://github.com/valeoai/LOST) and [ConveNeXt](https://github.com/facebookresearch/ConvNeXt) repositories.
+
+### Acknowledgments
+This work was part of (i) the project “Intelligenter Fruit Telen”, funded by the Interreg V program Vlaanderen-Nederland, with the financial support of the European Regional Development Fund, and (ii) the project INTELLI-FRUIT (SR/00/370), funded by BELSPO (Belgian Science Policy Office) in the frame of the STEREO III programme.
