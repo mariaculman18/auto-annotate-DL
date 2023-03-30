@@ -23,7 +23,7 @@ Following the below flowchart:
 3. The object discoveries are fed into an image classifier to obtain the most probable class it belongs to (highest confidence). This robust classifier, [ConvNeXt](https://arxiv.org/abs/2201.03545), was trained with objects from more than 21 thousand different classes.
 4. Resulting object annotations (discoveries + classes) are displayed in the original image accompanied by the confidence score.
 
-<img src="./Flowchart.png" />
+
 
 Install the necessary packages to run the code in a conda environment:
 
