@@ -33,6 +33,7 @@ Install the necessary packages to run the code in a conda environment:
     conda install -c conda-forge opencv matplotlib tqdm scikit-image
     pip install opencv-python-headless
     pip install gradio
+    pip install transformers
     (If using the Jupyter notebook version)
     conda install -c conda-forge ipykernel ipywidgets
     python -m ipykernel install --user --name object_det_env --display-name "Python (object_det_env)"
