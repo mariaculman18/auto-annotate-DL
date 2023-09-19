@@ -32,7 +32,7 @@ Install the necessary packages to run the code in a conda environment:
     conda install pytorch torchvision torchaudio cpuonly -c pytorch
     conda install -c conda-forge opencv matplotlib tqdm scikit-image
     pip install opencv-python-headless
-    pip install gradio
+    pip install timm
     pip install transformers
     (If using the Jupyter notebook version)
     conda install -c conda-forge ipykernel ipywidgets
