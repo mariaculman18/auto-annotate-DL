@@ -19,14 +19,17 @@ from tqdm import tqdm
 from PIL import Image
 import skimage.io as io
 import cv2
-import requests
-import gradio as gr
+import timm
+from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, pipeline
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 from torchvision import transforms as pth_transforms
 from scipy.ndimage import label, find_objects
 import vision_transformer as vits
+
+os.system("wget https://dl.fbaipublicfiles.com/convnext/label_to_words.json")
+imagenet_labels = json.load(open('label_to_words.json'))
 
 ## Fuctions
 def dino(arch, patch_size, device): 
@@ -225,36 +228,43 @@ def convnext(inp, final_pred):
     # Open image 
     img_dis = Image.open(inp[1])
     
-    # Create temporal folder to save cropped images
-    tempdir = tempfile.mkdtemp()
-    
     # Create cropped images centered at box discovery and use Hugging Face space of ConvNeXt to retrieve image classification
     labels = []
     confidences = []
     for i, p in enumerate(final_pred):
         [bbox_x, bbox_y, bbox_w, bbox_h] = p[0], p[1], p[2]-p[0], p[3]-p[1]
 
-        # Crop image to standard size and save at temporary folder
+        # Crop image to standard size
         x_center = bbox_x + (bbox_w / 2)
         y_center = bbox_y + (bbox_h / 2)
         s = 128
         box_dis = img_dis.crop((x_center - (s / 2), y_center - (s / 2), x_center + (s / 2), y_center + (s / 2)))
-        crop_path = os.path.join(tempdir, im_name + '_{}'.format(i) + '.jpg')
-        box_dis.save(crop_path, "JPEG", quality=100)
-        image = gr.processing_utils.encode_url_or_file_to_base64(crop_path)
-        
-        # Send image to ConvNeXt space and get classification results
-        r = requests.post(url='https://hf.space/embed/akhaliq/convnext/+/api/predict/', json={"data": [image]})
-        convnext = r.json().get('data')[0].get('confidences')
-        
+
+        # Load image to ConvNeXt model and get classification results
+        model = timm.create_model('convnext_xlarge.fb_in22k', pretrained=True)
+        model = model.eval()
+        data_config = timm.data.resolve_model_data_config(model)
+        transforms = timm.data.create_transform(**data_config, is_training=False)
+        out = model(transforms(box_dis).unsqueeze(0))
+
         # Keep label and confidence of classification with highest confidence.
-        label = list(convnext[0].values())[0]
+        output = torch.topk(out.softmax(dim=1), k=1)
+        index = output.indices[0]
+        label = imagenet_labels[str(int(index))]
         labels.append(label)
-        confidence = list(convnext[0].values())[1]
+        confidence = output.values[0].item()
         confidences.append(confidence)
-    
-    # Eliminate temporary folder
-    shutil.rmtree(tempdir)
+
+        # # Alternative ConvNext
+        # pipe = pipeline("image-classification",
+        #         model=ConvNextForImageClassification.from_pretrained("facebook/convnext-xlarge-224-22k-1k"),
+        #         feature_extractor=ConvNextFeatureExtractor.from_pretrained("facebook/convnext-xlarge-224-22k-1k"))
+        # output = pipe(box_dis)
+        # # Keep label and confidence of classification with highest confidence.
+        # label = list(output[0].values())[1]
+        # labels.append(label)
+        # confidence = list(output[0].values())[0]
+        # confidences.append(confidence)
     
     return labels, confidences
 
@@ -271,10 +281,10 @@ def visualize_predictions(image, preds, output_dir, im_name, number_seeds, corre
     plt.imshow(image)
     ax = plt.gca()
     
-    # Draw each prediction if its confidence is above 0.25    
+    # Draw each prediction if its confidence is above 0.20
     for (xmin, ymin, xmax, ymax), label, conf, c in zip(preds, labels, confidences, colors):
         label = label[:label.find(",")] if label.find(',') != -1 else label
-        if conf > 0.25:
+        if conf > 0.20:
             w = xmax - xmin
             h = ymax - ymin
             ax.add_patch(plt.Rectangle((xmin, ymin), w, h,
