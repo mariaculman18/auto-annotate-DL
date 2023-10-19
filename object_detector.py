@@ -381,7 +381,7 @@ if __name__ == "__main__":
         )
         paded = torch.zeros(size_im)
         paded[:, : img.shape[1], : img.shape[2]] = img
-        img = paded
+        img = paded.to(device)
 
         # Move to gpu
         # img = img.cuda(non_blocking=True) # Make line available if working in GPU device instead of CPU device
